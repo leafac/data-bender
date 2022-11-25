@@ -1,0 +1,46 @@
+{
+  "name": "data-bender",
+  "version": "0.0.0",
+  "description": "Data Bending Made Easy",
+  "keywords": [
+    "data-bending",
+    "ffmpeg",
+    "video",
+    "audio"
+  ],
+  "homepage": "https://github.com/leafac/data-bender",
+  "repository": "https://github.com/leafac/data-bender",
+  "bugs": "https://github.com/leafac/data-bender/issues",
+  "funding": [
+    "https://patreon.com/leafac",
+    "https://paypal.me/LeandroFacchinettiEU",
+    "https://github.com/sponsors/leafac",
+    "https://btc.com/34KJBgtaFYMtDqpSgMayw9qiKWg2GQXA9M"
+  ],
+  "author": "Leandro Facchinetti <data-bender@leafac.com> (https://leafac.com)",
+  "license": "GPL-3.0",
+  "bin": "./build/index.mjs",
+  "scripts": {
+    "prepare": "tsc",
+    "start": "nodemon --watch \"./source/**/*.mts\" --ext \"*\" --exec \"npm run prepare && node ./build/index.mjs ./examples/video--short.mp4\"",
+    "clean": "shx rm -rf \"./examples/video--short{,--*}/\"",
+    "test": "prettier --check \"source/**/*.mts\" --end-of-line auto",
+    "test:license": "license-checker --production --summary"
+  },
+  "dependencies": {
+    "commander": "^9.4.1",
+    "execa": "^6.1.0",
+    "lodash": "^4.17.21",
+    "unused-filename": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.190",
+    "@types/node": "^18.11.9",
+    "caxa": "^3.0.1",
+    "license-checker": "^25.0.1",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.0",
+    "shx": "^0.3.4",
+    "typescript": "^4.9.3"
+  }
+}

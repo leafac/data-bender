@@ -1,0 +1,86 @@
+on: push
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+        include:
+          - os: windows
+            build: npx caxa --input . --output "data-bender--windows--${{ github.sha }}.exe" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/build/index.mjs"
+            artifact: data-bender--windows--${{ github.sha }}.exe
+          - os: macos
+            build: |
+              npx caxa --input . --output "data-bender" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/build/index.mjs"
+              tar czf "data-bender--macos--${{ github.sha }}.tgz" "data-bender"
+            artifact: data-bender--macos--${{ github.sha }}.tgz
+          - os: ubuntu
+            build: |
+              npx caxa --input . --output "data-bender" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/build/index.mjs"
+              tar czf "data-bender--linux--${{ github.sha }}.tgz" "data-bender"
+            artifact: data-bender--linux--${{ github.sha }}.tgz
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - run: |
+          npm ci
+          ${{ matrix.build }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  test:
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - run: |
+          npm install-ci-test
+
+  publish--npm:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          npm ci
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish--release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: data-bender--windows--${{ github.sha }}.exe
+      - run: mv data-bender--windows--${{ github.sha }}.exe data-bender--windows--${{ github.ref_name }}.exe
+      - uses: actions/download-artifact@v3
+        with:
+          name: data-bender--macos--${{ github.sha }}.tgz
+      - run: mv data-bender--macos--${{ github.sha }}.tgz data-bender--macos--${{ github.ref_name }}.tgz
+      - uses: actions/download-artifact@v3
+        with:
+          name: data-bender--linux--${{ github.sha }}.tgz
+      - run: mv data-bender--linux--${{ github.sha }}.tgz data-bender--linux--${{ github.ref_name }}.tgz
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            data-bender--windows--${{ github.ref_name }}.exe
+            data-bender--macos--${{ github.ref_name }}.tgz
+            data-bender--linux--${{ github.ref_name }}.tgz
