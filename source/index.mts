@@ -56,7 +56,7 @@ export default async function dataBender({
 
   for (let bend = 1; bend <= bends; bend++) {
     const output = `${bend}${inputExtension}`;
-    await fs.appendFile(path.join(outputDirectory, "log.txt"), output + "\n");
+    await log(output);
 
     // TODO: MORE FORMATS 👏
     const pixelFormat = lodash.sample(["rgb24", "yuv420p"])!;
@@ -113,7 +113,7 @@ export default async function dataBender({
       "asetrate",
       "asettb",
       "ashowinfo",
-      "asidedata",
+      // "asidedata",
       "asoftclip",
       "aspectralstats",
       "astats",
@@ -147,14 +147,14 @@ export default async function dataBender({
       "firequalizer",
       "flanger",
       "haas",
-      "hdcd",
+      // "hdcd",
       "highpass",
       "highshelf",
       "loudnorm",
       "lowpass",
       "lowshelf",
       "mcompand",
-      "pan",
+      // "pan",
       "replaygain",
       "rubberband",
       "silencedetect",
@@ -236,6 +236,7 @@ export default async function dataBender({
 
     await fs.rm(inputRaw, { force: true });
     await fs.rm(outputRaw, { force: true });
+    await log();
   }
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
@@ -244,18 +245,18 @@ export default async function dataBender({
       reject: false,
       preferLocal: true,
     });
-    await fs.appendFile(
-      path.join(outputDirectory, "log.txt"),
-      result.escapedCommand + "\n"
-    );
+    await log(result.escapedCommand);
     if (result.failed) {
-      if (typeof result.all === "string")
-        await fs.appendFile(
-          path.join(outputDirectory, "log.txt"),
-          result.all + "\n"
-        );
+      if (typeof result.all === "string") await log(result.all);
       throw new Error(result.all);
     }
+  }
+
+  async function log(message?: string): Promise<void> {
+    await fs.appendFile(
+      path.join(outputDirectory, "log.txt"),
+      (message ?? "") + "\n"
+    );
   }
 }
 
