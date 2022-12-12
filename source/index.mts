@@ -55,6 +55,9 @@ export default async function dataBender({
   const size = `${inputMetadata.width}x${inputMetadata.height}`;
 
   for (let bend = 1; bend <= bends; bend++) {
+    const output = `${bend}${inputExtension}`;
+    await fs.appendFile(path.join(outputDirectory, "log.txt"), output + "\n");
+
     // TODO: MORE FORMATS 👏
     const pixelFormat = lodash.sample(["rgb24", "yuv420p"])!;
     const audioFormat = lodash.sample(["alaw", "mulaw"])!;
@@ -228,7 +231,7 @@ export default async function dataBender({
       inputMetadata.codec,
       "-b:v",
       `${inputMetadata.bitRate}k`,
-      path.join(outputDirectory, `${bend}${inputExtension}`)
+      path.join(outputDirectory, output)
     );
 
     await fs.rm(inputRaw, { force: true });
