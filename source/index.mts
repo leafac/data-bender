@@ -27,7 +27,7 @@ export default async function dataBender({
   if (inputExtension.trim() === "")
     throw new Error("‘input’ missing extension");
 
-  const inputMetadata = (
+  const inputMetadataText = (
     await execa("ffmpeg", ["-i", input], {
       all: true,
       reject: false,
@@ -35,7 +35,7 @@ export default async function dataBender({
     })
   ).all;
 
-  if (typeof inputMetadata !== "string")
+  if (typeof inputMetadataText !== "string")
     throw new Error("Failed to acquire ‘input’ metadata");
 
   outputDirectory = await unusedFilename.unusedFilename(outputDirectory, {
@@ -45,20 +45,21 @@ export default async function dataBender({
 
   // TODO: Detect audio files
 
-  const inputMetadataMatch = inputMetadata.match(
-    /$\s*Stream .*? Video: .*?, (?<width>\d+)x(?<height>\d+) .*?, (?<frameRate>\d+(?:.\d+)?) fps/m
+  // TODO: Time base stuff.
+  const inputMetadataMatch = inputMetadataText.match(
+    /$\s*Stream .*? Video: (?<codec>\w+) .*?, (?<pixelFormat>\w+).*?, (?<width>\d+)x(?<height>\d+), (?<bitRate>[\d.]+) kb\/s, (?<frameRate>[\d.]+) fps/m
   );
   if (inputMetadataMatch === null || inputMetadataMatch.groups === undefined)
     throw new Error("Failed to find video stream");
-  const { width, height, frameRate } = inputMetadataMatch.groups;
-  const size = `${width}x${height}`;
+  const inputMetadata = inputMetadataMatch.groups;
+  const size = `${inputMetadata.width}x${inputMetadata.height}`;
 
   // TODO: MORE FORMATS 👏
   const pixelFormat = lodash.sample(["rgb24", "yuv420p"])!;
   const audioFormat = lodash.sample(["alaw", "mulaw"])!;
   const audioSampleRate = lodash.sample(["8000", "44100", "48000", "96000"])!;
   const audioChannelCount = lodash.sample(["1", "2"])!;
-  const audioFilter = lodash.sample("tremolo")!;
+  const audioFilter = lodash.sample(["tremolo"])!;
 
   const inputRaw = path.join(outputDirectory, "input.raw");
   const outputRaw = path.join(outputDirectory, "output.raw");
@@ -70,7 +71,7 @@ export default async function dataBender({
     "-s",
     size,
     "-r",
-    frameRate,
+    inputMetadata.frameRate,
     "-pix_fmt",
     pixelFormat,
     "-an",
@@ -102,7 +103,7 @@ export default async function dataBender({
     "-s",
     size,
     "-r",
-    frameRate,
+    inputMetadata.frameRate,
     "-pix_fmt",
     pixelFormat,
     "-i",
@@ -110,7 +111,13 @@ export default async function dataBender({
     "-s",
     size,
     "-r",
-    frameRate,
+    inputMetadata.frameRate,
+    "-pix_fmt",
+    inputMetadata.pixelFormat,
+    "-vcodec",
+    inputMetadata.codec,
+    "-b:v",
+    inputMetadata.bitRate,
     path.join(outputDirectory, `1${inputExtension}`)
   );
 
