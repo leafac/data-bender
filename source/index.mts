@@ -47,10 +47,10 @@ export default async function dataBender({
 
   // TODO: Time base stuff.
   const inputMetadataMatch = inputMetadataText.match(
-    /$\s*Stream .*? Video: (?<codec>\w+) .*?, (?<pixelFormat>\w+).*?, (?<width>\d+)x(?<height>\d+), (?<bitRate>[\d.]+) kb\/s, (?<frameRate>[\d.]+) fps/m
+    /$\s*Stream .*? Video: (?<codec>\w+).*?, (?<pixelFormat>\w+).*?, (?<width>\d+)x(?<height>\d+).*?, (?<bitRate>[\d.]+) kb\/s, (?<frameRate>[\d.]+) fps/m
   );
   if (inputMetadataMatch === null || inputMetadataMatch.groups === undefined)
-    throw new Error("Failed to find video stream");
+    throw new Error(`Failed to find video stream:\n${inputMetadataText}`);
   const inputMetadata = inputMetadataMatch.groups;
   const size = `${inputMetadata.width}x${inputMetadata.height}`;
 
@@ -117,7 +117,7 @@ export default async function dataBender({
     "-vcodec",
     inputMetadata.codec,
     "-b:v",
-    inputMetadata.bitRate,
+    `${inputMetadata.bitRate}k`,
     path.join(outputDirectory, `1${inputExtension}`)
   );
 
