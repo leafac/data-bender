@@ -58,3 +58,4 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 
 - Consider allowing the user to provide presets of filters they like, for example…
 - Use https://www.npmjs.com/package/@ffmpeg/ffmpeg and allow you to data bend in the browser without having to upload!
+- We could provide just the conversion to raw and then back, to allow for people to bend outside our application, for example, using REAPER.
