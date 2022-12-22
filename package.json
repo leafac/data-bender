@@ -30,6 +30,7 @@
   "dependencies": {
     "commander": "^9.4.1",
     "execa": "^6.1.0",
+    "ffmpeg-static": "^5.1.0",
     "lodash": "^4.17.21",
     "unused-filename": "^4.0.1"
   },

@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
 import fs from "node:fs/promises";
+import assert from "node:assert/strict";
 import path from "node:path";
 import url from "node:url";
 import * as commander from "commander";
 import { execa } from "execa";
 import lodash from "lodash";
 import * as unusedFilename from "unused-filename";
+import maybeFFmpegPath from "ffmpeg-static";
+assert.equal(typeof maybeFFmpegPath, "string");
+const ffmpegPath = maybeFFmpegPath as unknown as string;
 
 export default async function dataBender({
   input,
@@ -28,7 +32,7 @@ export default async function dataBender({
     throw new Error("‘input’ missing extension");
 
   const inputMetadataText = (
-    await execa("ffmpeg", ["-i", input], {
+    await execa(ffmpegPath, ["-i", input], {
       all: true,
       reject: false,
       preferLocal: true,
@@ -240,7 +244,7 @@ export default async function dataBender({
   }
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
-    const result = await execa("ffmpeg", ["-y", ...commandLineArguments], {
+    const result = await execa(ffmpegPath, ["-y", ...commandLineArguments], {
       all: true,
       reject: false,
       preferLocal: true,
