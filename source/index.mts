@@ -23,7 +23,7 @@ export default async function dataBender({
 }: {
   input: string;
   outputDirectory?: string;
-  bends?: "filters" | "pixel-formats" | number;
+  bends?: "pixel-formats" | "filters" | number;
 }): Promise<void> {
   await fs.access(input);
 
@@ -68,177 +68,6 @@ export default async function dataBender({
   const outputRaw = path.join(outputDirectory, "output.raw");
 
   switch (bends) {
-    case "filters":
-      for (const audioFilter of [
-        "adecorrelate",
-        "adelay",
-        "adenorm",
-        "aderivative",
-        "adynamicequalizer",
-        "adynamicsmooth",
-        "aecho",
-        "aemphasis",
-        "aeval",
-        "aexciter",
-        "afade",
-        "afftdn",
-        "afftfilt",
-        "afifo",
-        "aformat",
-        "afreqshift",
-        "afwtdn",
-        "agate",
-        "aintegral",
-        "alatency",
-        "alimiter",
-        "allpass",
-        "aloop",
-        "ametadata",
-        "anlmdn",
-        "anull",
-        "apad",
-        "aperms",
-        "aphaser",
-        "aphaseshift",
-        "apsyclip",
-        "apulsator",
-        "arealtime",
-        "aresample",
-        "areverse",
-        "arnndn",
-        "asendcmd",
-        "asetnsamples",
-        "asetpts",
-        "asetrate",
-        "asettb",
-        "ashowinfo",
-        "asidedata",
-        "asoftclip",
-        "aspectralstats",
-        "astats",
-        "asubboost",
-        "asubcut",
-        "asupercut",
-        "asuperpass",
-        "asuperstop",
-        "atempo",
-        "atilt",
-        "atrim",
-        "bandpass",
-        "bandreject",
-        "bass",
-        "biquad",
-        "channelmap",
-        "chorus",
-        "compand",
-        "compensationdelay",
-        "crossfeed",
-        "crystalizer",
-        "dcshift",
-        "deesser",
-        "drmeter",
-        "dynaudnorm",
-        "earwax",
-        "equalizer",
-        "extrastereo",
-        "firequalizer",
-        "flanger",
-        "haas",
-        "hdcd",
-        "highpass",
-        "highshelf",
-        "loudnorm",
-        "lowpass",
-        "lowshelf",
-        "mcompand",
-        "pan",
-        "replaygain",
-        "silencedetect",
-        "silenceremove",
-        "speechnorm",
-        "stereotools",
-        "stereowiden",
-        "superequalizer",
-        "surround",
-        "treble",
-        "tremolo",
-        "vibrato",
-        "volume",
-        "volumedetect",
-      ]) {
-        const output = `${audioFilter}${inputExtension}`;
-        await log(output);
-
-        await ffmpeg(
-          "-i",
-          input,
-          "-f",
-          "rawvideo",
-          "-s",
-          size,
-          "-r",
-          inputMetadata.frameRate,
-          "-pix_fmt",
-          pixelFormat,
-          "-an",
-          inputRaw
-        );
-        let succeeded = false;
-        const time = process.hrtime.bigint();
-        try {
-          await ffmpeg(
-            "-f",
-            audioFormat,
-            "-ar",
-            audioSampleRate,
-            "-ac",
-            audioChannelCount,
-            "-i",
-            inputRaw,
-            "-af",
-            audioFilter,
-            "-f",
-            audioFormat,
-            "-ar",
-            audioSampleRate,
-            "-ac",
-            audioChannelCount,
-            outputRaw
-          );
-          await ffmpeg(
-            "-f",
-            "rawvideo",
-            "-s",
-            size,
-            "-r",
-            inputMetadata.frameRate,
-            "-pix_fmt",
-            pixelFormat,
-            "-i",
-            outputRaw,
-            "-s",
-            size,
-            "-r",
-            inputMetadata.frameRate,
-            "-pix_fmt",
-            inputMetadata.pixelFormat,
-            "-vcodec",
-            inputMetadata.codec,
-            "-b:v",
-            `${inputMetadata.bitRate}k`,
-            path.join(outputDirectory, output)
-          );
-          succeeded = true;
-        } catch {}
-
-        console.log(
-          `| ${audioFilter} | ${succeeded ? "✅" : "❌"} | ${
-            (process.hrtime.bigint() - time) / 1_000_000n
-          }ms |`
-        );
-      }
-      break;
-
     case "pixel-formats":
       for (const pixelFormat of [
         "0bgr",
@@ -483,6 +312,177 @@ export default async function dataBender({
       }
       break;
 
+    case "filters":
+      for (const audioFilter of [
+        "adecorrelate",
+        "adelay",
+        "adenorm",
+        "aderivative",
+        "adynamicequalizer",
+        "adynamicsmooth",
+        "aecho",
+        "aemphasis",
+        "aeval",
+        "aexciter",
+        "afade",
+        "afftdn",
+        "afftfilt",
+        "afifo",
+        "aformat",
+        "afreqshift",
+        "afwtdn",
+        "agate",
+        "aintegral",
+        "alatency",
+        "alimiter",
+        "allpass",
+        "aloop",
+        "ametadata",
+        "anlmdn",
+        "anull",
+        "apad",
+        "aperms",
+        "aphaser",
+        "aphaseshift",
+        "apsyclip",
+        "apulsator",
+        "arealtime",
+        "aresample",
+        "areverse",
+        "arnndn",
+        "asendcmd",
+        "asetnsamples",
+        "asetpts",
+        "asetrate",
+        "asettb",
+        "ashowinfo",
+        "asidedata",
+        "asoftclip",
+        "aspectralstats",
+        "astats",
+        "asubboost",
+        "asubcut",
+        "asupercut",
+        "asuperpass",
+        "asuperstop",
+        "atempo",
+        "atilt",
+        "atrim",
+        "bandpass",
+        "bandreject",
+        "bass",
+        "biquad",
+        "channelmap",
+        "chorus",
+        "compand",
+        "compensationdelay",
+        "crossfeed",
+        "crystalizer",
+        "dcshift",
+        "deesser",
+        "drmeter",
+        "dynaudnorm",
+        "earwax",
+        "equalizer",
+        "extrastereo",
+        "firequalizer",
+        "flanger",
+        "haas",
+        "hdcd",
+        "highpass",
+        "highshelf",
+        "loudnorm",
+        "lowpass",
+        "lowshelf",
+        "mcompand",
+        "pan",
+        "replaygain",
+        "silencedetect",
+        "silenceremove",
+        "speechnorm",
+        "stereotools",
+        "stereowiden",
+        "superequalizer",
+        "surround",
+        "treble",
+        "tremolo",
+        "vibrato",
+        "volume",
+        "volumedetect",
+      ]) {
+        const output = `${audioFilter}${inputExtension}`;
+        await log(output);
+
+        await ffmpeg(
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputRaw
+        );
+        let succeeded = false;
+        const time = process.hrtime.bigint();
+        try {
+          await ffmpeg(
+            "-f",
+            audioFormat,
+            "-ar",
+            audioSampleRate,
+            "-ac",
+            audioChannelCount,
+            "-i",
+            inputRaw,
+            "-af",
+            audioFilter,
+            "-f",
+            audioFormat,
+            "-ar",
+            audioSampleRate,
+            "-ac",
+            audioChannelCount,
+            outputRaw
+          );
+          await ffmpeg(
+            "-f",
+            "rawvideo",
+            "-s",
+            size,
+            "-r",
+            inputMetadata.frameRate,
+            "-pix_fmt",
+            pixelFormat,
+            "-i",
+            outputRaw,
+            "-s",
+            size,
+            "-r",
+            inputMetadata.frameRate,
+            "-pix_fmt",
+            inputMetadata.pixelFormat,
+            "-vcodec",
+            inputMetadata.codec,
+            "-b:v",
+            `${inputMetadata.bitRate}k`,
+            path.join(outputDirectory, output)
+          );
+          succeeded = true;
+        } catch {}
+
+        console.log(
+          `| ${audioFilter} | ${succeeded ? "✅" : "❌"} | ${
+            (process.hrtime.bigint() - time) / 1_000_000n
+          }ms |`
+        );
+      }
+      break;
+
     default:
       for (let bend = 1; bend <= bends; bend++) {
         const output = `${bend}${inputExtension}`;
@@ -653,7 +653,7 @@ if (url.fileURLToPath(import.meta.url) === (await fs.realpath(process.argv[1])))
             input,
             outputDirectory,
             bends:
-              bends === "filters" || bends === "pixel-formats"
+              bends === "pixel-formats" || bends === "filters"
                 ? bends
                 : typeof bends === "string"
                 ? Number(bends)
