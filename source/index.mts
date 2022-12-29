@@ -235,6 +235,7 @@ export default async function dataBender({
 
     await fs.rm(inputRaw, { force: true });
     await fs.rm(outputRaw, { force: true });
+  }
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
     const result = await execa(ffmpegPath, ["-y", ...commandLineArguments], {
