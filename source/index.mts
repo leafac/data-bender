@@ -259,7 +259,51 @@ export default async function dataBender({
           "96000",
         ])!;
         const audioChannelCount = lodash.sample(["1", "2"])!;
-        const audioFilter = lodash.sample([])!;
+        // TODO: Include filter parameters
+        const audioFilter = lodash.sample([
+          "acompressor",
+          "acontrast",
+          "adeclick",
+          "adecorrelate",
+          "aderivative",
+          "adynamicsmooth",
+          "aecho",
+          "aemphasis",
+          "aexciter",
+          "afreqshift",
+          "alimiter",
+          "allpass",
+          "aphaser",
+          "aphaseshift",
+          "apulsator",
+          "areverse",
+          "asetrate",
+          "asoftclip",
+          "asubboost",
+          "asubcut",
+          "asupercut",
+          "asuperpass",
+          "asuperstop",
+          "atempo",
+          "bandpass",
+          "bandreject",
+          "crossfeed",
+          "crystalizer",
+          "earwax",
+          "extrastereo",
+          "flanger",
+          "haas",
+          "highpass",
+          "loudnorm",
+          "lowpass",
+          "mcompand",
+          "replaygain",
+          "stereotools",
+          "stereowiden",
+          "surround",
+          "tremolo",
+          "vibrato",
+        ])!;
 
         const inputRaw = path.join(outputDirectory, "input.raw");
         const outputRaw = path.join(outputDirectory, "output.raw");
