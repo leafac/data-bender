@@ -68,8 +68,8 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 | acompressor       | ✅        |   2045ms | ✅          |
 | acontrast         | ✅        |   1162ms | ✅          |
 | acopy             | ✅        |    812ms | ❌          |
-| acue              | ✅        |    616ms | ❌          |
 | acrusher          | ✅        |   1633ms | ❌          |
+| acue              | ✅        |    616ms | ❌          |
 | adeclick          | ✅        | 178770ms | ✅          |
 | adeclip           | ❌        |          |             |
 | adecorrelate      | ✅        |   2195ms | ✅          |
@@ -85,6 +85,7 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 | afade             | ✅        |    584ms | ❌          |
 | afftdn            | ✅        |   6038ms | ❌          |
 | afftfilt          | ✅        |   5119ms | ❌          |
+| afifo             | ✅        |    607ms | ❌          |
 | aformat           | ✅        |    739ms | ❌          |
 | afreqshift        | ✅        |   2468ms | ✅          |
 | afwtdn            | ✅        |   4649ms | ❌          |
@@ -166,4 +167,3 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 | vibrato           | ✅        |   1057ms | ✅          |
 | volume            | ✅        |    701ms | ❌          |
 | volumedetect      | ✅        |    744ms | ❌          |
-| afifo             | ✅        |    607ms | ❌          |
