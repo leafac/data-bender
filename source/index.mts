@@ -58,30 +58,17 @@ export default async function dataBender({
   const inputMetadata = inputMetadataMatch.groups;
   const size = `${inputMetadata.width}x${inputMetadata.height}`;
 
+  const pixelFormat = "rgb24";
+  const audioFormat = "alaw";
+  const audioSampleRate = "48000";
+  const audioChannelCount = "1";
+  const audioFilter = "atempo";
+
+  const inputRaw = path.join(outputDirectory, "input.raw");
+  const outputRaw = path.join(outputDirectory, "output.raw");
+
   switch (bends) {
-    case "filters": {
-      const pixelFormat = "rgb24";
-      const audioFormat = "alaw";
-      const audioSampleRate = "48000";
-      const audioChannelCount = "1";
-
-      const inputRaw = path.join(outputDirectory, "input.raw");
-      const outputRaw = path.join(outputDirectory, "output.raw");
-      await ffmpeg(
-        "-i",
-        input,
-        "-f",
-        "rawvideo",
-        "-s",
-        size,
-        "-r",
-        inputMetadata.frameRate,
-        "-pix_fmt",
-        pixelFormat,
-        "-an",
-        inputRaw
-      );
-
+    case "filters":
       for (const audioFilter of [
         "adecorrelate",
         "adelay",
@@ -179,6 +166,21 @@ export default async function dataBender({
         "volume",
         "volumedetect",
       ]) {
+        await ffmpeg(
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputRaw
+        );
+
         const output = `${audioFilter}${inputExtension}`;
         await log(output);
 
@@ -238,21 +240,9 @@ export default async function dataBender({
         );
       }
 
-      await fs.rm(inputRaw, { force: true });
-      await fs.rm(outputRaw, { force: true });
-
       break;
-    }
 
-    case "pixel-formats": {
-      const audioFormat = "alaw";
-      const audioSampleRate = "48000";
-      const audioChannelCount = "1";
-      const audioFilter = "atempo";
-
-      const inputRaw = path.join(outputDirectory, "input.raw");
-      const outputRaw = path.join(outputDirectory, "output.raw");
-
+    case "pixel-formats":
       for (const pixelFormat of [
         "0bgr",
         "0rgb",
@@ -497,13 +487,9 @@ export default async function dataBender({
         );
       }
 
-      await fs.rm(inputRaw, { force: true });
-      await fs.rm(outputRaw, { force: true });
-
       break;
-    }
 
-    default: {
+    default:
       for (let bend = 1; bend <= bends; bend++) {
         const output = `${bend}${inputExtension}`;
         await log(output);
@@ -622,14 +608,13 @@ export default async function dataBender({
           `${inputMetadata.bitRate}k`,
           path.join(outputDirectory, output)
         );
-
-        await fs.rm(inputRaw, { force: true });
-        await fs.rm(outputRaw, { force: true });
       }
 
       break;
-    }
   }
+
+  await fs.rm(inputRaw, { force: true });
+  await fs.rm(outputRaw, { force: true });
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
     const result = await execa(ffmpegPath, ["-y", ...commandLineArguments], {
