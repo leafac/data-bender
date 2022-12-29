@@ -281,7 +281,6 @@ export default async function dataBender({
           "asoftclip",
           "asubboost",
           "asubcut",
-          "asupercut",
           "asuperpass",
           "asuperstop",
           "atempo",
