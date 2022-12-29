@@ -23,7 +23,7 @@ export default async function dataBender({
 }: {
   input: string;
   outputDirectory?: string;
-  bends?: number;
+  bends?: "filters" | number;
 }): Promise<void> {
   await fs.access(input);
 
@@ -235,14 +235,13 @@ export default async function dataBender({
 
     await fs.rm(inputRaw, { force: true });
     await fs.rm(outputRaw, { force: true });
-    await log();
-  }
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
     const result = await execa(ffmpegPath, ["-y", ...commandLineArguments], {
       all: true,
       reject: false,
       preferLocal: true,
+      timeout: 60 * 1000,
     });
     await log(result.escapedCommand);
     if (result.failed) {
@@ -282,7 +281,12 @@ if (url.fileURLToPath(import.meta.url) === (await fs.realpath(process.argv[1])))
           await dataBender({
             input,
             outputDirectory,
-            bends: typeof bends === "string" ? Number(bends) : undefined,
+            bends:
+              bends === "filters"
+                ? bends
+                : typeof bends === "string"
+                ? Number(bends)
+                : undefined,
           });
         } catch (error) {
           console.error(error);
