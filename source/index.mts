@@ -557,7 +557,7 @@ export default async function dataBender({
           "-an",
           inputRaw
         );
-        // TODO: Use different input & output settings
+        // TODO: Use different input & output settings, including bitrate
         await ffmpeg(
           "-f",
           audioFormat,
