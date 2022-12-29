@@ -166,6 +166,9 @@ export default async function dataBender({
         "volume",
         "volumedetect",
       ]) {
+        const output = `${audioFilter}${inputExtension}`;
+        await log(output);
+
         await ffmpeg(
           "-i",
           input,
@@ -180,12 +183,7 @@ export default async function dataBender({
           "-an",
           inputRaw
         );
-
-        const output = `${audioFilter}${inputExtension}`;
-        await log(output);
-
         let succeeded = false;
-
         const time = process.hrtime.bigint();
         try {
           await ffmpeg(
@@ -239,7 +237,6 @@ export default async function dataBender({
           }ms |`
         );
       }
-
       break;
 
     case "pixel-formats":
@@ -413,6 +410,9 @@ export default async function dataBender({
         "yuyv422",
         "yvyu422",
       ]) {
+        const output = `${pixelFormat}${inputExtension}`;
+        await log(output);
+
         await ffmpeg(
           "-i",
           input,
@@ -427,12 +427,7 @@ export default async function dataBender({
           "-an",
           inputRaw
         );
-
-        const output = `${audioFilter}${inputExtension}`;
-        await log(output);
-
         let succeeded = false;
-
         const time = process.hrtime.bigint();
         try {
           await ffmpeg(
@@ -481,12 +476,11 @@ export default async function dataBender({
         } catch {}
 
         console.log(
-          `| ${audioFilter} | ${succeeded ? "✅" : "❌"} | ${
+          `| ${pixelFormat} | ${succeeded ? "✅" : "❌"} | ${
             (process.hrtime.bigint() - time) / 1_000_000n
           }ms |`
         );
       }
-
       break;
 
     default:
@@ -549,8 +543,6 @@ export default async function dataBender({
           "vibrato",
         ])!;
 
-        const inputRaw = path.join(outputDirectory, "input.raw");
-        const outputRaw = path.join(outputDirectory, "output.raw");
         await ffmpeg(
           "-i",
           input,
@@ -609,7 +601,6 @@ export default async function dataBender({
           path.join(outputDirectory, output)
         );
       }
-
       break;
   }
 
