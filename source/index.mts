@@ -23,7 +23,7 @@ export default async function dataBender({
 }: {
   input: string;
   outputDirectory?: string;
-  bends?: "filters" | number;
+  bends?: "filters" | "pixel-formats" | number;
 }): Promise<void> {
   await fs.access(input);
 
@@ -179,6 +179,265 @@ export default async function dataBender({
         "volume",
         "volumedetect",
       ]) {
+        const output = `${audioFilter}${inputExtension}`;
+        await log(output);
+
+        let succeeded = false;
+
+        const time = process.hrtime.bigint();
+        try {
+          await ffmpeg(
+            "-f",
+            audioFormat,
+            "-ar",
+            audioSampleRate,
+            "-ac",
+            audioChannelCount,
+            "-i",
+            inputRaw,
+            "-af",
+            audioFilter,
+            "-f",
+            audioFormat,
+            "-ar",
+            audioSampleRate,
+            "-ac",
+            audioChannelCount,
+            outputRaw
+          );
+          await ffmpeg(
+            "-f",
+            "rawvideo",
+            "-s",
+            size,
+            "-r",
+            inputMetadata.frameRate,
+            "-pix_fmt",
+            pixelFormat,
+            "-i",
+            outputRaw,
+            "-s",
+            size,
+            "-r",
+            inputMetadata.frameRate,
+            "-pix_fmt",
+            inputMetadata.pixelFormat,
+            "-vcodec",
+            inputMetadata.codec,
+            "-b:v",
+            `${inputMetadata.bitRate}k`,
+            path.join(outputDirectory, output)
+          );
+          succeeded = true;
+        } catch {}
+
+        console.log(
+          `| ${audioFilter} | ${succeeded ? "✅" : "❌"} | ${
+            (process.hrtime.bigint() - time) / 1_000_000n
+          }ms |`
+        );
+      }
+
+      await fs.rm(inputRaw, { force: true });
+      await fs.rm(outputRaw, { force: true });
+
+      break;
+    }
+
+    case "pixel-formats": {
+      const audioFormat = "alaw";
+      const audioSampleRate = "48000";
+      const audioChannelCount = "1";
+      const audioFilter = "atempo";
+
+      const inputRaw = path.join(outputDirectory, "input.raw");
+      const outputRaw = path.join(outputDirectory, "output.raw");
+
+      for (const pixelFormat of [
+        "0bgr",
+        "0rgb",
+        "abgr",
+        "argb",
+        "ayuv64le",
+        "bgr0",
+        "bgr24",
+        "bgr4_byte",
+        "bgr444be",
+        "bgr444le",
+        "bgr48be",
+        "bgr48le",
+        "bgr555be",
+        "bgr555le",
+        "bgr565be",
+        "bgr565le",
+        "bgr8",
+        "bgra",
+        "bgra64be",
+        "bgra64le",
+        "gbrap",
+        "gbrap10be",
+        "gbrap10le",
+        "gbrap12be",
+        "gbrap12le",
+        "gbrap16be",
+        "gbrap16le",
+        "gbrapf32be",
+        "gbrapf32le",
+        "gbrp",
+        "gbrp10be",
+        "gbrp10le",
+        "gbrp12be",
+        "gbrp12le",
+        "gbrp14be",
+        "gbrp14le",
+        "gbrp16be",
+        "gbrp16le",
+        "gbrp9be",
+        "gbrp9le",
+        "gbrpf32be",
+        "gbrpf32le",
+        "gray",
+        "gray10be",
+        "gray10le",
+        "gray12be",
+        "gray12le",
+        "gray14be",
+        "gray14le",
+        "gray16be",
+        "gray16le",
+        "gray9be",
+        "gray9le",
+        "grayf32be",
+        "grayf32le",
+        "monob",
+        "monow",
+        "nv12",
+        "nv21",
+        "nv24",
+        "nv42",
+        "p010be",
+        "p010le",
+        "p016be",
+        "p016le",
+        "p210be",
+        "p210le",
+        "p216be",
+        "p216le",
+        "p410be",
+        "p410le",
+        "p416be",
+        "p416le",
+        "rgb0",
+        "rgb24",
+        "rgb4_byte",
+        "rgb444be",
+        "rgb444le",
+        "rgb48be",
+        "rgb48le",
+        "rgb555be",
+        "rgb555le",
+        "rgb565be",
+        "rgb565le",
+        "rgb8",
+        "rgba",
+        "rgba64be",
+        "rgba64le",
+        "uyvy422",
+        "x2bgr10le",
+        "x2rgb10le",
+        "xyz12be",
+        "xyz12le",
+        "ya16be",
+        "ya16le",
+        "ya8",
+        "yuv410p",
+        "yuv411p",
+        "yuv420p",
+        "yuv420p10be",
+        "yuv420p10le",
+        "yuv420p12be",
+        "yuv420p12le",
+        "yuv420p14be",
+        "yuv420p14le",
+        "yuv420p16be",
+        "yuv420p16le",
+        "yuv420p9be",
+        "yuv420p9le",
+        "yuv422p",
+        "yuv422p10be",
+        "yuv422p10le",
+        "yuv422p12be",
+        "yuv422p12le",
+        "yuv422p14be",
+        "yuv422p14le",
+        "yuv422p16be",
+        "yuv422p16le",
+        "yuv422p9be",
+        "yuv422p9le",
+        "yuv440p",
+        "yuv440p10be",
+        "yuv440p10le",
+        "yuv440p12be",
+        "yuv440p12le",
+        "yuv444p",
+        "yuv444p10be",
+        "yuv444p10le",
+        "yuv444p12be",
+        "yuv444p12le",
+        "yuv444p14be",
+        "yuv444p14le",
+        "yuv444p16be",
+        "yuv444p16le",
+        "yuv444p9be",
+        "yuv444p9le",
+        "yuva420p",
+        "yuva420p10be",
+        "yuva420p10le",
+        "yuva420p16be",
+        "yuva420p16le",
+        "yuva420p9be",
+        "yuva420p9le",
+        "yuva422p",
+        "yuva422p10be",
+        "yuva422p10le",
+        "yuva422p12be",
+        "yuva422p12le",
+        "yuva422p16be",
+        "yuva422p16le",
+        "yuva422p9be",
+        "yuva422p9le",
+        "yuva444p",
+        "yuva444p10be",
+        "yuva444p10le",
+        "yuva444p12be",
+        "yuva444p12le",
+        "yuva444p16be",
+        "yuva444p16le",
+        "yuva444p9be",
+        "yuva444p9le",
+        "yuvj411p",
+        "yuvj420p",
+        "yuvj422p",
+        "yuvj440p",
+        "yuvj444p",
+        "yuyv422",
+        "yvyu422",
+      ]) {
+        await ffmpeg(
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputRaw
+        );
+
         const output = `${audioFilter}${inputExtension}`;
         await log(output);
 
@@ -418,7 +677,7 @@ if (url.fileURLToPath(import.meta.url) === (await fs.realpath(process.argv[1])))
             input,
             outputDirectory,
             bends:
-              bends === "filters"
+              bends === "filters" || bends === "pixel-formats"
                 ? bends
                 : typeof bends === "string"
                 ? Number(bends)

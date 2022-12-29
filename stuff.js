@@ -3,8 +3,8 @@ const audioFilters = [
   "acompressor",
   "acontrast",
   "acopy",
-  "acue",
   "acrusher",
+  "acue",
   "adeclick",
   "adeclip",
   "adecorrelate",
@@ -20,6 +20,7 @@ const audioFilters = [
   "afade",
   "afftdn",
   "afftfilt",
+  "afifo",
   "aformat",
   "afreqshift",
   "afwtdn",
@@ -101,7 +102,6 @@ const audioFilters = [
   "vibrato",
   "volume",
   "volumedetect",
-  "afifo",
 ];
 
 const multiAudioFilters = [
@@ -141,9 +141,9 @@ const videoFilters = [
   "colorchannelmixer",
   "colorcontrast",
   "colorcorrect",
+  "colorhold",
   "colorize",
   "colorkey",
-  "colorhold",
   "colorlevels",
   "colormatrix",
   "colorspace",
@@ -193,6 +193,7 @@ const videoFilters = [
   "field",
   "fieldhint",
   "fieldorder",
+  "fifo",
   "fillborders",
   "find_rect",
   "floodfill",
@@ -340,12 +341,11 @@ const videoFilters = [
   "waveform",
   "weave",
   "xbr",
-  "yadif",
   "yadif_videotoolbox",
+  "yadif",
   "yaepblur",
   "zoompan",
   "zscale",
-  "fifo",
 ];
 
 const multiVideoFilters = [
