@@ -24,7 +24,7 @@
     "prepare": "tsc",
     "start": "nodemon --watch \"./source/**/*.mts\" --ext \"*\" --exec \"npm run prepare && node ./build/index.mjs ./examples/video--short.mp4\"",
     "clean": "shx rm -rf \"./examples/video--short{,--*}/\"",
-    "test": "prettier --check \"source/**/*.mts\" --end-of-line auto",
+    "test": "prettier --check \"./README.md\" --check \"./package.json\" --check \"./source/**/*.mts\" --end-of-line auto",
     "test:license": "license-checker --production --summary"
   },
   "dependencies": {

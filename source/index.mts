@@ -67,6 +67,8 @@ export default async function dataBender({
   const inputRaw = path.join(outputDirectory, "input.raw");
   const outputRaw = path.join(outputDirectory, "output.raw");
 
+  // TODO: Extract a function that does one bend.
+
   switch (bends) {
     case "pixel-formats":
       for (const pixelFormat of [
