@@ -56,8 +56,18 @@ export default async function dataBender({
   );
   if (inputMetadataMatch === null || inputMetadataMatch.groups === undefined)
     throw new Error(`Failed to find video stream:\n${inputMetadataText}`);
-  const inputMetadata = inputMetadataMatch.groups;
-  const size = `${inputMetadata.width}x${inputMetadata.height}`;
+  const inputMetadata = {
+    ...inputMetadataMatch.groups,
+    size: `${inputMetadataMatch.groups.width}x${inputMetadataMatch.groups.height}`,
+  } as {
+    codec: string;
+    pixelFormat: string;
+    width: string;
+    height: string;
+    bitRate: string;
+    frameRate: string;
+    size: string;
+  };
 
   const pixelFormat = "rgb24";
   const audioFormat = "alaw";
@@ -251,7 +261,7 @@ export default async function dataBender({
           "-f",
           "rawvideo",
           "-s",
-          size,
+          inputMetadata.size,
           "-r",
           inputMetadata.frameRate,
           "-pix_fmt",
@@ -259,7 +269,7 @@ export default async function dataBender({
           "-an",
           inputRaw
         );
-        let succeeded = false;
+        let success = false;
         const time = process.hrtime.bigint();
         try {
           await ffmpeg(
@@ -285,7 +295,7 @@ export default async function dataBender({
             "-f",
             "rawvideo",
             "-s",
-            size,
+            inputMetadata.size,
             "-r",
             inputMetadata.frameRate,
             "-pix_fmt",
@@ -293,7 +303,7 @@ export default async function dataBender({
             "-i",
             outputRaw,
             "-s",
-            size,
+            inputMetadata.size,
             "-r",
             inputMetadata.frameRate,
             "-pix_fmt",
@@ -304,11 +314,11 @@ export default async function dataBender({
             `${inputMetadata.bitRate}k`,
             path.join(outputDirectory, output)
           );
-          succeeded = true;
+          success = true;
         } catch {}
 
         console.log(
-          `| ${pixelFormat} | ${succeeded ? "✅" : "❌"} | ${
+          `| ${pixelFormat} | ${success ? "✅" : "❌"} | ${
             (process.hrtime.bigint() - time) / 1_000_000n
           }ms |`
         );
@@ -422,7 +432,7 @@ export default async function dataBender({
           "-f",
           "rawvideo",
           "-s",
-          size,
+          inputMetadata.size,
           "-r",
           inputMetadata.frameRate,
           "-pix_fmt",
@@ -456,7 +466,7 @@ export default async function dataBender({
             "-f",
             "rawvideo",
             "-s",
-            size,
+            inputMetadata.size,
             "-r",
             inputMetadata.frameRate,
             "-pix_fmt",
@@ -464,7 +474,7 @@ export default async function dataBender({
             "-i",
             outputRaw,
             "-s",
-            size,
+            inputMetadata.size,
             "-r",
             inputMetadata.frameRate,
             "-pix_fmt",
@@ -721,7 +731,7 @@ export default async function dataBender({
           "-f",
           "rawvideo",
           "-s",
-          size,
+          inputMetadata.size,
           "-r",
           inputMetadata.frameRate,
           "-pix_fmt",
@@ -753,7 +763,7 @@ export default async function dataBender({
           "-f",
           "rawvideo",
           "-s",
-          size,
+          inputMetadata.size,
           "-r",
           inputMetadata.frameRate,
           "-pix_fmt",
@@ -761,7 +771,7 @@ export default async function dataBender({
           "-i",
           outputRaw,
           "-s",
-          size,
+          inputMetadata.size,
           "-r",
           inputMetadata.frameRate,
           "-pix_fmt",
@@ -778,6 +788,107 @@ export default async function dataBender({
 
   await fs.rm(inputRaw, { force: true });
   await fs.rm(outputRaw, { force: true });
+
+  async function dataBend({
+    output,
+    pixelFormat,
+    outputPixelFormat = pixelFormat,
+    audioFormat,
+    outputAudioFormat = audioFormat,
+    audioSampleRate,
+    outputAudioSampleRate = audioSampleRate,
+    audioChannelCount,
+    outputAudioChannelCount = audioChannelCount,
+    audioFilter,
+    size = inputMetadata.size,
+    outputSize = size,
+  }: {
+    output: string;
+    pixelFormat: string;
+    outputPixelFormat: string;
+    audioFormat: string;
+    outputAudioFormat: string;
+    audioSampleRate: string;
+    outputAudioSampleRate: string;
+    audioChannelCount: string;
+    outputAudioChannelCount: string;
+    audioFilter: string;
+    size: string;
+    outputSize: string;
+  }): Promise<{ success: boolean; time: bigint }> {
+    let success = false;
+    const time = process.hrtime.bigint();
+
+    try {
+      await log(output);
+
+      await ffmpeg(
+        "-i",
+        input,
+        "-f",
+        "rawvideo",
+        "-s",
+        size,
+        "-r",
+        inputMetadata.frameRate,
+        "-pix_fmt",
+        pixelFormat,
+        "-an",
+        inputRaw
+      );
+
+      await ffmpeg(
+        "-f",
+        audioFormat,
+        "-ar",
+        audioSampleRate,
+        "-ac",
+        audioChannelCount,
+        "-i",
+        inputRaw,
+        "-af",
+        audioFilter,
+        "-f",
+        outputAudioFormat,
+        "-ar",
+        outputAudioSampleRate,
+        "-ac",
+        outputAudioChannelCount,
+        outputRaw
+      );
+
+      await ffmpeg(
+        "-f",
+        "rawvideo",
+        "-s",
+        outputSize,
+        "-r",
+        inputMetadata.frameRate,
+        "-pix_fmt",
+        outputPixelFormat,
+        "-i",
+        outputRaw,
+        "-s",
+        inputMetadata.size,
+        "-r",
+        inputMetadata.frameRate,
+        "-pix_fmt",
+        inputMetadata.pixelFormat,
+        "-vcodec",
+        inputMetadata.codec,
+        "-b:v",
+        `${inputMetadata.bitRate}k`,
+        path.join(outputDirectory, output)
+      );
+
+      success = true;
+    } catch {}
+
+    return {
+      success,
+      time: (process.hrtime.bigint() - time) / 1_000_000n,
+    };
+  }
 
   async function ffmpeg(...commandLineArguments: string[]): Promise<void> {
     const result = await execa(ffmpegPath, ["-y", ...commandLineArguments], {
