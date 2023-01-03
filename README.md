@@ -1,6 +1,5 @@
 TODAY:
 
-- Extract function to do one bend
 - Explore more formats
 
 ---

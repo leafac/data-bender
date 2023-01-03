@@ -73,7 +73,7 @@ export default async function dataBender({
   const audioFormat = "alaw";
   const audioSampleRate = "48000";
   const audioChannelCount = "1";
-  const audioFilter = "atempo";
+  const audioFilter = "tremolo";
 
   const inputRaw = path.join(outputDirectory, "input.raw");
   const outputRaw = path.join(outputDirectory, "output.raw");
@@ -262,6 +262,46 @@ export default async function dataBender({
         });
         console.log(
           `| ${pixelFormat} | ${result.success ? "✅" : "❌"} | ${
+            result.time
+          }ms |`
+        );
+      }
+      break;
+
+    case "audio-formats":
+      for (const audioFormat of [
+        "alaw",
+        "f32be",
+        "f32le",
+        "f64be",
+        "f64le",
+        "mulaw",
+        "s16be",
+        "s16le",
+        "s24be",
+        "s24le",
+        "s32be",
+        "s32le",
+        "s8",
+        "u16be",
+        "u16le",
+        "u24be",
+        "u24le",
+        "u32be",
+        "u32le",
+        "u8",
+        "vidc",
+      ]) {
+        const result = await dataBend({
+          output: `${audioFormat}${inputExtension}`,
+          pixelFormat,
+          audioFormat,
+          audioSampleRate,
+          audioChannelCount,
+          audioFilter,
+        });
+        console.log(
+          `| ${audioFormat} | ${result.success ? "✅" : "❌"} | ${
             result.time
           }ms |`
         );

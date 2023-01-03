@@ -23,6 +23,7 @@
   "scripts": {
     "prepare": "tsc",
     "start": "nodemon --watch \"./source/**/*.mts\" --ext \"*\" --exec \"npm run prepare && node ./build/index.mjs ./examples/video--short.mp4\"",
+    "explore": "npm run prepare && node ./build/index.mjs ./examples/video--short.mp4 --bends",
     "clean": "shx rm -rf \"./examples/video--short{,--*}/\"",
     "test": "prettier --check \"./README.md\" --check \"./package.json\" --check \"./source/**/*.mts\" --end-of-line auto",
     "test:license": "license-checker --production --summary"
