@@ -347,3 +347,29 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 | yuvj444p     | ✅       |   1754ms |
 | yuyv422      | ✅       |   1813ms |
 | yvyu422      | ✅       |   1367ms |
+
+---
+
+| Audio Format | Succeded | Duration |
+| ------------ | -------- | -------: |
+| alaw         | ✅       |    806ms |
+| f32be        | ✅       |    567ms |
+| f32le        | ✅       |    564ms |
+| f64be        | ✅       |    559ms |
+| f64le        | ✅       |    530ms |
+| mulaw        | ✅       |    753ms |
+| s16be        | ✅       |    643ms |
+| s16le        | ✅       |    636ms |
+| s24be        | ✅       |    592ms |
+| s24le        | ✅       |    609ms |
+| s32be        | ✅       |    578ms |
+| s32le        | ✅       |    576ms |
+| s8           | ✅       |    693ms |
+| u16be        | ✅       |    687ms |
+| u16le        | ✅       |    650ms |
+| u24be        | ✅       |    637ms |
+| u24le        | ✅       |    656ms |
+| u32be        | ✅       |    679ms |
+| u32le        | ✅       |    662ms |
+| u8           | ✅       |    689ms |
+| vidc         | ✅       |    835ms |
