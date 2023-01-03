@@ -24,7 +24,7 @@ export default async function dataBender({
 }: {
   input: string;
   outputDirectory?: string;
-  bends?: "pixel-formats" | "filters" | number;
+  bends?: "pixel-formats" | "audio-formats" | "filters" | number;
 }): Promise<void> {
   await fs.access(input);
 
@@ -804,8 +804,14 @@ if (await node.isExecuted(import.meta.url))
             input,
             outputDirectory,
             bends:
-              bends === "pixel-formats" || bends === "filters"
+              bends === "pixel-formats" ||
+              bends === "audio-formats" ||
+              bends === "filters"
                 ? bends
+                : typeof bends === "string" && !isNaN(Number(bends))
+                ? (() => {
+                    throw new Error("Invalid ‘--bends’");
+                  })()
                 : typeof bends === "string"
                 ? Number(bends)
                 : undefined,
