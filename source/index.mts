@@ -808,7 +808,7 @@ if (await node.isExecuted(import.meta.url))
               bends === "audio-formats" ||
               bends === "filters"
                 ? bends
-                : typeof bends === "string" && !isNaN(Number(bends))
+                : typeof bends === "string" && isNaN(Number(bends))
                 ? (() => {
                     throw new Error("Invalid ‘--bends’");
                   })()
@@ -816,8 +816,8 @@ if (await node.isExecuted(import.meta.url))
                 ? Number(bends)
                 : undefined,
           });
-        } catch (error) {
-          console.error(error);
+        } catch (error: any) {
+          console.error(error.message);
           process.exit(1);
         }
       }
