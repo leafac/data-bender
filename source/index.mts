@@ -8,6 +8,7 @@ import * as commander from "commander";
 import { execa } from "execa";
 import lodash from "lodash";
 import * as unusedFilename from "unused-filename";
+import * as node from "@leafac/node";
 import maybeFFmpegPath from "ffmpeg-static";
 assert.equal(typeof maybeFFmpegPath, "string");
 const ffmpegPath = maybeFFmpegPath as unknown as string;
@@ -800,7 +801,7 @@ export default async function dataBender({
   }
 }
 
-if (url.fileURLToPath(import.meta.url) === (await fs.realpath(process.argv[1])))
+if (await node.isExecuted(import.meta.url))
   await commander.program
     .name("data-bender")
     .description("Data Bending Made Easy")

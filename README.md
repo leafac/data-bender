@@ -1,6 +1,5 @@
 TODAY:
 
-- Use ‘@leafac/node’ for checking if file is being executed
 - Extract function to do one bend
 - Explore more formats
 
