@@ -1,6 +1,5 @@
-TODAY:
-
-- Explore more formats
+- Give the outputs names based on the input name instead of simply `1.mp4`.
+- Continue exploring formats.
 
 ---
 
