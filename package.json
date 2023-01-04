@@ -29,7 +29,7 @@
     "test:license": "license-checker --production --summary"
   },
   "dependencies": {
-    "@leafac/node": "^0.0.1",
+    "@leafac/node": "^0.0.2",
     "commander": "^9.4.1",
     "execa": "^6.1.0",
     "ffmpeg-static": "^5.1.0",
@@ -37,13 +37,13 @@
     "unused-filename": "^4.0.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.190",
-    "@types/node": "^18.11.9",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.18",
     "caxa": "^3.0.1",
     "license-checker": "^25.0.1",
     "nodemon": "^2.0.20",
-    "prettier": "^2.8.0",
+    "prettier": "^2.8.1",
     "shx": "^0.3.4",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.4"
   }
 }

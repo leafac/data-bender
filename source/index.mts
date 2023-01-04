@@ -685,7 +685,7 @@ export default async function dataBender({
     outputSize?: string;
   }): Promise<{ success: boolean; time: bigint }> {
     let success = false;
-    const time = process.hrtime.bigint();
+    const start = process.hrtime.bigint();
 
     try {
       await log(output);
@@ -754,7 +754,7 @@ export default async function dataBender({
 
     return {
       success,
-      time: (process.hrtime.bigint() - time) / 1_000_000n,
+      time: node.elapsedTime(start),
     };
   }
 
