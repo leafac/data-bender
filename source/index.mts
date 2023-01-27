@@ -422,9 +422,9 @@ export default async function dataBender({
 
     default:
       for (let bend = 1; bend <= bends; bend++) {
-        // TODO: MORE FORMATS 👏
-        // TODO: Use different input & output settings, including bitrate
+        // TODO: More sample rates and channel counts?
         // TODO: Include filter parameters
+        // TODO: Use different input & output settings, including bitrate
         const result = await dataBend({
           output: `${bend}${inputExtension}`,
           pixelFormat: lodash.sample([
