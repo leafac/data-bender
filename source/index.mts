@@ -50,6 +50,17 @@ export default async function dataBender({
 
   // TODO: Detect audio files
 
+  const durationMatch = inputMetadataText.match(
+    /$\s*Duration: (?<hours>\d\d):(?<minutes>\d\d):(?<seconds>\d\d)/m
+  );
+  if (durationMatch === null || durationMatch.groups === undefined)
+    throw new Error(`Failed to find duration:\n${inputMetadataText}`);
+  const duration =
+    Number(durationMatch.groups.hours) * 60 * 60 +
+    Number(durationMatch.groups.minutes) * 60 +
+    Number(durationMatch.groups.seconds);
+  const long = duration > 10;
+
   // TODO: Time base stuff.
   const inputMetadataMatch = inputMetadataText.match(
     /$\s*Stream .*? Video: (?<codec>\w+).*?, (?<pixelFormat>\w+).*?, (?<width>\d+)x(?<height>\d+).*?, (?<bitRate>[\d.]+) kb\/s, (?<frameRate>[\d.]+) fps/m
@@ -75,7 +86,8 @@ export default async function dataBender({
   const audioChannelCount = "1";
   const audioFilter = "tremolo";
 
-  const inputRaw = path.join(outputDirectory, "input.raw");
+  const inputRaw = path.join(outputDirectory, "input--1.raw");
+  const inputLongRaw = path.join(outputDirectory, "input--2.raw");
   const outputRaw = path.join(outputDirectory, "output.raw");
 
   switch (bends) {
@@ -675,6 +687,7 @@ export default async function dataBender({
   }
 
   await fs.rm(inputRaw, { force: true });
+  await fs.rm(inputLongRaw, { force: true });
   await fs.rm(outputRaw, { force: true });
 
   async function dataBend({
@@ -710,40 +723,107 @@ export default async function dataBender({
     try {
       await log(output);
 
-      await ffmpeg(
-        "-i",
-        input,
-        "-f",
-        "rawvideo",
-        "-s",
-        size,
-        "-r",
-        inputMetadata.frameRate,
-        "-pix_fmt",
-        pixelFormat,
-        "-an",
-        inputRaw
-      );
+      if (long) {
+        await ffmpeg(
+          "-ss",
+          String(Math.random() * (duration - 10)),
+          "-t",
+          "10",
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputRaw
+        );
+        await ffmpeg(
+          "-ss",
+          String(Math.random() * (duration - 10)),
+          "-t",
+          "10",
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputLongRaw
+        );
 
-      await ffmpeg(
-        "-f",
-        audioFormat,
-        "-ar",
-        audioSampleRate,
-        "-ac",
-        audioChannelCount,
-        "-i",
-        inputRaw,
-        "-af",
-        audioFilter,
-        "-f",
-        outputAudioFormat,
-        "-ar",
-        outputAudioSampleRate,
-        "-ac",
-        outputAudioChannelCount,
-        outputRaw
-      );
+        await ffmpeg(
+          "-f",
+          audioFormat,
+          "-ar",
+          audioSampleRate,
+          "-ac",
+          audioChannelCount,
+          "-i",
+          inputRaw,
+          "-f",
+          audioFormat,
+          "-ar",
+          audioSampleRate,
+          "-ac",
+          audioChannelCount,
+          "-i",
+          inputLongRaw,
+          "-filter_complex",
+          "amix=duration=shortest",
+          "-f",
+          outputAudioFormat,
+          "-ar",
+          outputAudioSampleRate,
+          "-ac",
+          outputAudioChannelCount,
+          outputRaw
+        );
+      } else {
+        await ffmpeg(
+          "-i",
+          input,
+          "-f",
+          "rawvideo",
+          "-s",
+          size,
+          "-r",
+          inputMetadata.frameRate,
+          "-pix_fmt",
+          pixelFormat,
+          "-an",
+          inputRaw
+        );
+
+        await ffmpeg(
+          "-f",
+          audioFormat,
+          "-ar",
+          audioSampleRate,
+          "-ac",
+          audioChannelCount,
+          "-i",
+          inputRaw,
+          "-af",
+          audioFilter,
+          "-f",
+          outputAudioFormat,
+          "-ar",
+          outputAudioSampleRate,
+          "-ac",
+          outputAudioChannelCount,
+          outputRaw
+        );
+      }
 
       await ffmpeg(
         "-f",
