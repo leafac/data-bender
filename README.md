@@ -59,6 +59,12 @@ Raw audio → Audio
 ffmpeg -y -f alaw -ar 44100 -ac 1 -i output.raw output.wav
 ```
 
+Cut long video
+
+```
+ffmpeg -y -ss 00:00:07.00 -t 00:00:10.00 -i "examples/video--long--small.mp4" -f rawvideo -s 960x540 -r 5 -pix_fmt yuva444p9be -an "examples/video--long--small.raw"
+```
+
 ---
 
 - Consider allowing the user to provide presets of filters they like, for example…
