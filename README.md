@@ -16,7 +16,12 @@ ffmpeg -y -f alaw -ar 44100 -ac 1 -i input.raw -af tremolo -f alaw -ar 44100 -ac
 ```
 
 ```
-ffmpeg -y -f alaw -ar 44100 -ac 1 -i input.raw -f alaw -ar 44100 -ac 1 -i input-2.raw -filter_complex amix=inputs=2:duration=first -f alaw -ar 44100 -ac 1 output.raw
+ffmpeg -y \
+  -f alaw -ar 44100 -ac 1 -i "examples/video--long--small--1.raw" \
+  -f alaw -ar 44100 -ac 1 -i "examples/video--long--small--2.raw" \
+  -filter_complex "amix=duration=shortest" \
+  -f alaw -ar 44100 -ac 1 "examples/output.raw"
+
 ```
 
 ```
