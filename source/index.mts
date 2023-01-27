@@ -724,6 +724,7 @@ export default async function dataBender({
       await log(output);
 
       if (long) {
+        // TODO: Use differnet pixel formats and so forth.
         await ffmpeg(
           "-ss",
           String(Math.random() * (duration - 10)),
@@ -761,6 +762,8 @@ export default async function dataBender({
           inputLongRaw
         );
 
+        // TODO: Bend the raw inputs
+        // TODO: More filters
         await ffmpeg(
           "-f",
           audioFormat,
