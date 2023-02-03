@@ -632,13 +632,17 @@ export default async function dataBender({
             "u8",
             "vidc",
           ])!;
+        const audioSampleRate = () =>
+          lodash.sample(["8000", "44100", "48000", "96000"])!;
         const result = await dataBend({
           output: `${bend}${inputExtension}`,
           pixelFormat: pixelFormat(),
           outputPixelFormat: Math.random() < 0.9 ? undefined : pixelFormat(),
           audioFormat: audioFormat(),
           outputAudioFormat: Math.random() < 0.9 ? undefined : audioFormat(),
-          audioSampleRate: lodash.sample(["8000", "44100", "48000", "96000"])!,
+          audioSampleRate: audioSampleRate(),
+          outputAudioSampleRate:
+            Math.random() < 0.9 ? undefined : audioSampleRate(),
           audioChannelCount: lodash.sample(["1", "2"])!,
           audioFilter: lodash.sample([
             "acompressor",
