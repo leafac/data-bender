@@ -437,9 +437,8 @@ export default async function dataBender({
         // TODO: More sample rates and channel counts?
         // TODO: Include filter parameters
         // TODO: Use different input & output settings, including bitrate
-        const result = await dataBend({
-          output: `${bend}${inputExtension}`,
-          pixelFormat: lodash.sample([
+        const pixelFormat = () =>
+          lodash.sample([
             "0bgr",
             "0rgb",
             "abgr",
@@ -608,7 +607,11 @@ export default async function dataBender({
             "yuvj444p",
             "yuyv422",
             "yvyu422",
-          ])!,
+          ])!;
+        const result = await dataBend({
+          output: `${bend}${inputExtension}`,
+          pixelFormat: pixelFormat(),
+          outputPixelFormat: Math.random() < 0.75 ? undefined : pixelFormat(),
           audioFormat: lodash.sample([
             "alaw",
             "f32be",
