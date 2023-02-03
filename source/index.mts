@@ -893,7 +893,10 @@ export default async function dataBender({
 
   async function log(message?: string): Promise<void> {
     await fs.appendFile(
-      path.join(outputDirectory, "log.txt"),
+      path.join(
+        outputDirectory,
+        `data-bender--log--${new Date().toISOString().replaceAll(":", "-")}.txt`
+      ),
       (message ?? "") + "\n"
     );
   }
