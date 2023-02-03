@@ -32,6 +32,10 @@ export default async function dataBender({
   if (inputExtension.trim() === "")
     throw new Error("‘input’ missing extension");
 
+  const inputBasenameWithoutExtension = path
+    .basename(input)
+    .slice(0, -inputExtension.length);
+
   const inputMetadataText = (
     await execa(ffmpegPath, ["-i", input], {
       all: true,
@@ -47,6 +51,13 @@ export default async function dataBender({
     incrementer: unusedFilename.separatorIncrementer("--"),
   });
   await fs.mkdir(outputDirectory, { recursive: true });
+
+  const logFile = path.join(
+    outputDirectory,
+    `${inputBasenameWithoutExtension}--${new Date()
+      .toISOString()
+      .replaceAll(":", "-")}.log`
+  );
 
   // TODO: Detect audio files
 
@@ -636,9 +647,7 @@ export default async function dataBender({
           lodash.sample(["44100", "48000", "96000"])!;
         const audioChannelCount = () => lodash.sample(["1", "2"])!;
         const result = await dataBend({
-          output: `${path
-            .basename(input)
-            .slice(0, -inputExtension.length)}--${Math.random()
+          output: `${inputBasenameWithoutExtension}--${Math.random()
             .toString(36)
             .slice(2)}${inputExtension}`,
           pixelFormat: pixelFormat(),
@@ -891,10 +900,6 @@ export default async function dataBender({
     }
   }
 
-  const logFile = path.join(
-    outputDirectory,
-    `data-bender--log--${new Date().toISOString().replaceAll(":", "-")}.txt`
-  );
   async function log(message?: string): Promise<void> {
     await fs.appendFile(logFile, (message ?? "") + "\n");
   }
