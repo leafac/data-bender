@@ -608,11 +608,8 @@ export default async function dataBender({
             "yuyv422",
             "yvyu422",
           ])!;
-        const result = await dataBend({
-          output: `${bend}${inputExtension}`,
-          pixelFormat: pixelFormat(),
-          outputPixelFormat: Math.random() < 0.75 ? undefined : pixelFormat(),
-          audioFormat: lodash.sample([
+        const audioFormat = () =>
+          lodash.sample([
             "alaw",
             "f32be",
             "f32le",
@@ -634,7 +631,13 @@ export default async function dataBender({
             "u32le",
             "u8",
             "vidc",
-          ])!,
+          ])!;
+        const result = await dataBend({
+          output: `${bend}${inputExtension}`,
+          pixelFormat: pixelFormat(),
+          outputPixelFormat: Math.random() < 0.9 ? undefined : pixelFormat(),
+          audioFormat: audioFormat(),
+          outputAudioFormat: Math.random() < 0.9 ? undefined : audioFormat(),
           audioSampleRate: lodash.sample(["8000", "44100", "48000", "96000"])!,
           audioChannelCount: lodash.sample(["1", "2"])!,
           audioFilter: lodash.sample([
