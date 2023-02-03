@@ -1,5 +1,5 @@
 {
-  "name": "data-bender",
+  "name": "@leafac/data-bender",
   "version": "0.0.1",
   "description": "Data Bending Made Easy",
   "keywords": [
@@ -19,6 +19,11 @@
   ],
   "author": "Leandro Facchinetti <data-bender@leafac.com> (https://leafac.com)",
   "license": "GPL-3.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": "./build/index.mjs",
+  "types": "./build/index.d.mts",
   "bin": "./build/index.mjs",
   "scripts": {
     "prepare": "tsc",
