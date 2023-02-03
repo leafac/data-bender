@@ -638,15 +638,15 @@ export default async function dataBender({
         const result = await dataBend({
           output: `${bend}${inputExtension}`,
           pixelFormat: pixelFormat(),
-          outputPixelFormat: Math.random() < 0.9 ? undefined : pixelFormat(),
+          outputPixelFormat: Math.random() < 0.97 ? undefined : pixelFormat(),
           audioFormat: audioFormat(),
-          outputAudioFormat: Math.random() < 0.9 ? undefined : audioFormat(),
+          outputAudioFormat: Math.random() < 0.97 ? undefined : audioFormat(),
           audioSampleRate: audioSampleRate(),
           outputAudioSampleRate:
-            Math.random() < 0.9 ? undefined : audioSampleRate(),
+            Math.random() < 0.97 ? undefined : audioSampleRate(),
           audioChannelCount: audioChannelCount(),
           outputAudioChannelCount:
-            Math.random() < 0.9 ? undefined : audioChannelCount(),
+            Math.random() < 0.97 ? undefined : audioChannelCount(),
           audioFilter: lodash.sample([
             "acompressor",
             "acontrast",
