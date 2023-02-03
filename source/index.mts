@@ -650,7 +650,6 @@ export default async function dataBender({
           audioFilter: lodash.sample([
             "acompressor",
             "acontrast",
-            "adeclick",
             "adecorrelate",
             "aderivative",
             "adynamicsmooth",
